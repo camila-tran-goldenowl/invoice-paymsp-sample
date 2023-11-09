@@ -1,0 +1,81 @@
+image: mhart/alpine-node:16.4.2
+pipelines:
+  branches:
+    staging:
+      - parallel:
+        - step:
+            name: Build and Deploy to Staging
+            size: 2x
+            caches:
+              - node
+              - yarncustom
+            script:
+              - apk update && apk add --update --no-cache git nodejs yarn
+              - yarn install
+              - yarn build:staging
+            artifacts:
+              - build/**
+        - step:
+            name: Security Scan
+            script:
+              - pipe: atlassian/git-secrets-scan:0.4.3
+      - step:
+          name: Deploy to Staging
+          deployment: Staging
+          clone:
+            enabled: false
+          script:
+            - pipe: atlassian/aws-s3-deploy:0.4.4
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+                S3_BUCKET: $AWS_BUCKET_NAME
+                LOCAL_PATH: 'build'
+            - pipe: atlassian/aws-cloudfront-invalidate:0.1.1
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+                DISTRIBUTION_ID: $DISTRIBUTION_ID
+    master:
+      - parallel:
+        - step:
+            name: Build and Deploy to Production
+            caches:
+              - node
+              - yarncustom
+            script:
+              - export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true && echo $PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
+              - export PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+              - apk add --no-cache git chromium nss freetype harfbuzz ca-certificates ttf-freefont nodejs yarn
+              - yarn install
+              - yarn build
+            artifacts:
+              - build/**
+        - step:
+            name: Security Scan
+            script:
+              - pipe: atlassian/git-secrets-scan:0.4.3
+      - step:
+          name: Deploy to Production
+          deployment: Production
+          clone:
+            enabled: false
+          script:
+            - pipe: atlassian/aws-s3-deploy:0.4.4
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+                S3_BUCKET: $AWS_BUCKET_NAME
+                LOCAL_PATH: 'build'
+            - pipe: atlassian/aws-cloudfront-invalidate:0.1.1
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+                DISTRIBUTION_ID: $DISTRIBUTION_ID
+definitions:
+  caches:
+    yarncustom: /usr/local/share/.cache/yarn/v1

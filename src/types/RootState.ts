@@ -1,0 +1,72 @@
+import { ICustomerNotificationState } from "./../pages/Settings/CustomerNotification/slice/types";
+import { IQuickbookDesktopState } from "./../pages/Integration/components/QuickbookDesktop/slice/types";
+import { SignInState } from "pages/SignInPage/slice/types";
+import { CustomerState } from "pages/Customers/slice/types";
+import { SignUpState } from "pages/SignUpPage/slice/types";
+import { IToastifyState } from "components/Toastify/slice/types";
+import { State as SyncLogState } from "pages/Integration/components/SyncLog/slice/types";
+import { IState as ConnectwiseApi } from "pages/Integration/components/Connectwise/slice/types";
+import { IState as QuickbookApi } from "pages/Integration/components/Quickbook/slice/types";
+import { IState as XeroApi } from "pages/Integration/components/Xero/slice/types";
+import { ITenantState } from "components/Tenant/slice/types";
+import { ITimezoneState } from "components/Timezone/slice/types";
+import { ICurrencyState } from "components/Currency/slice/types";
+import { ICountryState } from "components/Country/slice/types";
+import { IAutopayState } from "components/Autopay/slice/type";
+import { IPaymentMethodState as IPaymentMethodTenantState } from "components/PaymentMethods/Tenant/slice/types";
+import { IPaymentMethodState as IPaymentMethodCustomerState } from "components/PaymentMethods/Customer/slice/types";
+
+import { IFactorState } from "pages/TwoFactors/slice/types";
+import { IMailTemplateState } from "pages/Settings/Email/EmailTemplates/slice/types";
+import { ISMTPSettingState } from "pages/Settings/Email/SMTPSettings/slice/types";
+import { IPaymentGatewayState } from "pages/Settings/PaymentGateway/slice/types";
+import { ILoadingState } from "components/MDLoading/slice/types";
+import { IUserState } from "pages/User/slice/types";
+import { ISubscriptionState } from "pages/Settings/Subscription/slice/types";
+import { ICustomerState } from "pages/Customer/slice/types";
+import { IInvoiceState } from "pages/Invoice/slice/types";
+import { IAutotaskState } from "pages/Integration/components/Autotask/slice/types";
+import { IPaymentState } from "pages/Payments/slice/types";
+import { IModalState } from "components/MDModal/slice/types";
+import { IGlobalSearchState } from "components/GlobalSearch/slice/types";
+import { IAuditLogState } from "pages/Report/slice/types";
+import { ISyncState } from "pages/Sync/slice/types";
+import { IInvoicesState } from "pages/AllInvoices/slice/types";
+
+export interface RootState {
+  signIn: SignInState;
+  signUp: SignUpState;
+  syncLog: SyncLogState;
+  connectwiseApi: ConnectwiseApi;
+  quickbookApi: QuickbookApi;
+  xeroApi: XeroApi;
+  autotaskApi: IAutotaskState;
+  quickbookDesktopApi: IQuickbookDesktopState;
+
+  customers: CustomerState;
+  tenant: ITenantState;
+  timezone: ITimezoneState;
+  currency: ICurrencyState;
+  country: ICountryState;
+  autopay: IAutopayState;
+  paymentMethodCustomer: IPaymentMethodCustomerState;
+  paymentMethodTenant: IPaymentMethodTenantState;
+  factors: IFactorState;
+  mailTemplate: IMailTemplateState;
+  SMTPSetting: ISMTPSettingState;
+  paymentGateway: IPaymentGatewayState;
+  user: IUserState;
+  subscription: ISubscriptionState;
+
+  toastify: IToastifyState;
+  loading: ILoadingState;
+  customer: ICustomerState;
+  invoice: IInvoiceState;
+  invoices: IInvoicesState;
+  payment: IPaymentState;
+  modal: IModalState;
+  search: IGlobalSearchState;
+  auditLog: IAuditLogState;
+  sync: ISyncState;
+  customerNotification: ICustomerNotificationState;
+}
